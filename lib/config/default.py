@@ -97,7 +97,7 @@ _C.TRAIN.BEGIN_EPOCH = 0
 _C.TRAIN.END_EPOCH = 300 #240 ############
 
 _C.TRAIN.VAL_FREQ = 1
-_C.TRAIN.BATCH_SIZE_PER_GPU = 9  ##10 #24 ##############
+_C.TRAIN.BATCH_SIZE_PER_GPU = 32 #9  ##10 #24 ##############
 _C.TRAIN.SHUFFLE = True
 
 _C.TRAIN.IOU_THRESHOLD = 0.3 ###0.001
@@ -122,7 +122,7 @@ _C.TRAIN.PLOT = True                #
 
 # testing
 _C.TEST = CN(new_allowed=True)
-_C.TEST.BATCH_SIZE_PER_GPU = 24
+_C.TEST.BATCH_SIZE_PER_GPU = 32 #24
 _C.TEST.MODEL_FILE = ''
 _C.TEST.SAVE_JSON = False
 _C.TEST.SAVE_TXT = False
