@@ -458,36 +458,71 @@ YOLOP = [
 # [24, 33, 42],   #Det_out_idx, Da_Segout_idx, LL_Segout_idx
 [22, 31, 40],   #Det_out_idx, Da_Segout_idx, LL_Segout_idx
 
+#yolo8
 #[from, repeats, module, args]
+# [-1, Conv, [3,32, 3, 2]],  # 0-P1/2
+# [-1, Conv, [32,64, 3, 2]],  # 1-P2/4
+# [-1, C2f, [64,64,3, True]],
+# [-1, Conv, [64,128, 3, 2]],  # 3-P3/8
+# [-1, C2f, [128,128,6, True]],
+# [-1, Conv, [128,256, 3, 2]],  # 5-P4/16
+# [-1, C2f, [256,256,6, True]],
+# [-1, Conv, [256,512, 3, 2]],  # 7-P5/32
+# [-1, C2f, [512,512,3, True]],
+# [-1, SPPF, [512,512, 5]],  # 9
+
+#head
+# [-1, nn.Upsample, [None, 2, 'nearest']],
+# [[-1, 6], Concat, [1]],  # cat backbone P4
+# [-1, C2f, [768,256, 3]],  # 12
+
+# [-1, nn.Upsample, [None, 2, 'nearest']],
+# [[-1, 4], Concat, [1]], # cat backbone P3
+# [-1, C2f, [384,128, 3]],  # 15 (P3/8-small)
+
+# [-1, Conv, [128,128, 3, 2]],
+# [[-1, 12],  Concat, [1]],  # cat head P4
+# [-1, C2f, [384,256,3]],  # 18 (P4/16-medium)
+
+# [-1, Conv, [256,256, 3, 2]],
+# [[-1, 9], Concat, [1]],  # cat head P5
+# [-1, C2f, [768,512,3]],  # 21 (P5/32-large)
+
+# [[15, 18, 21], Detect, [nc,[128,256,512]]],  # Detect(P3, P4, P5)
+
+#yolo9
+
 [-1, Conv, [3,32, 3, 2]],  # 0-P1/2
-[-1, Conv, [32,64, 3, 2]],  # 1-P2/4
-[-1, C2f, [64,64,3, True]],
-[-1, Conv, [64,128, 3, 2]],  # 3-P3/8
-[-1, C2f, [128,128,6, True]],
-[-1, Conv, [128,256, 3, 2]],  # 5-P4/16
-[-1, C2f, [256,256,6, True]],
-[-1, Conv, [256,512, 3, 2]],  # 7-P5/32
-[-1, C2f, [512,512,3, True]],
-[-1, SPPF, [512,512, 5]],  # 9
+[-1, Conv, [32,64, 3, 2]] , # 1-P2/4
+[-1, RepNCSPELAN4, [64,128, 64, 32, 1]],  # 2
+[-1, ADown, [128,128]],  # 3-P3/8
+[-1, RepNCSPELAN4, [128,256, 128, 64, 1]],  # 4
+[-1, ADown, [256,256]] , # 5-P4/16
+[-1, RepNCSPELAN4, [256,256, 256, 128, 1]] , # 6
+[-1, ADown, [256,256]],  # 7-P5/32
+[-1, RepNCSPELAN4, [256,256, 256, 128, 1]] , # 8
+[-1, SPPELAN, [256, 256, 128]],  # 9
 
 #head
 [-1, nn.Upsample, [None, 2, 'nearest']],
-[[-1, 6], Concat, [1]],  # cat backbone P4
-[-1, C2f, [768,256, 3]],  # 12
+[[-1, 6], Concat, [1]] , # cat backbone P4
+[-1, RepNCSPELAN4, [512,256, 256, 128, 1]],  # 12
 
 [-1, nn.Upsample, [None, 2, 'nearest']],
-[[-1, 4], Concat, [1]], # cat backbone P3
-[-1, C2f, [384,128, 3]],  # 15 (P3/8-small)
+[[-1, 4], Concat, [1]],  # cat backbone P3
+[-1, RepNCSPELAN4, [512,128, 128, 64, 1]],  # 15 (P3/8-small)
 
-[-1, Conv, [128,128, 3, 2]],
-[[-1, 12],  Concat, [1]],  # cat head P4
-[-1, C2f, [384,256,3]],  # 18 (P4/16-medium)
+[-1, ADown, [128,128]],
+[[-1, 12], Concat, [1]] , # cat head P4
+[-1, RepNCSPELAN4, [384,256, 256, 128, 1]],  # 18 (P4/16-medium)
 
-[-1, Conv, [256,256, 3, 2]],
-[[-1, 9], Concat, [1]],  # cat head P5
-[-1, C2f, [768,512,3]],  # 21 (P5/32-large)
+[-1, ADown, [256,256]],
+[[-1, 9], Concat, [1]] , # cat head P5
+[-1, RepNCSPELAN4, [512,256, 256, 128, 1]],  # 21 (P5/32-large)
 
-[[15, 18, 21], Detect, [nc,[128,256,512]]],  # Detect(P3, P4, P5)
+[[15, 18, 21], Detect, [nc,[128,256,256]]],  # DDetect(P3, P4, P5)
+
+
 
 [ 13, Conv, [256, 128, 3, 1]],   #23
 [ -1, Upsample, [None, 2, 'nearest']],  #24
